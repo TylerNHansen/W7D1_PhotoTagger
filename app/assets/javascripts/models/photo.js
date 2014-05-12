@@ -9,7 +9,7 @@
   _.extend(Photo, {
     fetchByUserId: function(userId, callback) {
       callback = callback || function(res){console.log(res)};
-
+      that = this;
       $.ajax({
         type: 'get',
         url: '/api/users/' + userId + '/photos',
@@ -17,10 +17,14 @@
           res = _(res).map(function(el){
             return new Photo(el);
           })
+          that.all = res;
           callback(res);
         }
       })
-    }
+    },
+
+
+    all: []
   })
 
   _.extend(Photo.prototype, {
@@ -47,6 +51,7 @@
         type: 'post',
         success: function(res){
           _.extend(photo.attributes, res);
+          Photo.all.push(photo);
           callback();
         }
       })

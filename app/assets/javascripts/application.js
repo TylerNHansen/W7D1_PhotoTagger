@@ -22,3 +22,17 @@
 //= require_tree ../templates
 //
 //= require_tree .
+
+(function(root){
+  var Project = root.Project = (root.Project || {});
+
+  Project.initialize = function(userId){
+    Project.Photo.fetchByUserId(userId, function(){
+      var photoList = new Project.PhotosListView();
+      photoList.render(Project.Photo.all);
+      $('#content').append(photoList.$el);
+    });
+
+  }
+
+})(this);
