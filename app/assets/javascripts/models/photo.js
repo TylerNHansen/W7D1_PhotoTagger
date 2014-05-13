@@ -3,10 +3,12 @@
 
   var Photo = Project.Photo = function(attrs){
     this.attributes = (attrs || {});
-
   }
 
   _.extend(Photo, {
+    all: [],
+    _events: {},
+
     fetchByUserId: function(userId, callback) {
       callback = callback || function(res){console.log(res)};
       that = this;
@@ -22,9 +24,16 @@
         }
       })
     },
+    on: function(eventName, callback){
+      var cbArr = this._events[eventName] = (this._events[eventName] || []);
+      cbArr.push(callback);
+    },
 
-
-    all: []
+    trigger: function(eventName){
+      _(this._events[eventName]).each(function(callback){
+        callback();
+      })
+    }
   })
 
   _.extend(Photo.prototype, {
@@ -36,14 +45,12 @@
       this.attributes[attr_name] = val;
     },
 
-    create: function(callback){
+    create: function(){
       var photo = this;
 
       if(this.get('id')){
         return false;
       }
-
-      callback = callback || function(){console.log("test")};
 
       $.ajax({
         data: { photo: photo.attributes },
@@ -52,15 +59,13 @@
         success: function(res){
           _.extend(photo.attributes, res);
           Photo.all.push(photo);
-          callback();
+          Photo.trigger('add');
         }
       })
     },
 
-    save: function(callback){
+    save: function(){
       var photo = this;
-
-      callback = callback || function(){console.log("test")};
 
       if(this.get('id')) {
         $.ajax({
@@ -69,11 +74,10 @@
           type: 'put',
           success: function(res){
             _.extend(photo.attributes, res);
-            callback();
           }
         })
       } else {
-        this.create(callback)
+        this.create()
       }
     }
   });

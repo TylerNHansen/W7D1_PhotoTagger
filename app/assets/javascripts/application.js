@@ -27,6 +27,11 @@
   var Project = root.Project = (root.Project || {});
 
   Project.initialize = function(userId){
+
+    var photoForm = new Project.PhotoForm();
+    photoForm.render();
+    $('#content').append(photoForm.$el);
+
     Project.Photo.fetchByUserId(userId, function(){
       var photoList = new Project.PhotosListView();
       photoList.render(Project.Photo.all);

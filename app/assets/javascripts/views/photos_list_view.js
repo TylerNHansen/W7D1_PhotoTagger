@@ -3,6 +3,7 @@
 
   var PhotosListView = Project.PhotosListView = function() {
     this.$el = $('<div></div>');
+    Project.Photo.on('add', this.render.bind(this, Project.Photo.all));
   };
 
   _.extend(PhotosListView.prototype, {
@@ -12,7 +13,7 @@
       _(photos).each(function(photo){
         $list.append('<li>' + photo.get('title') + '</li>');
       })
-      this.$el.append($list);
+      this.$el.html($list);
       return this;
     }
   })
